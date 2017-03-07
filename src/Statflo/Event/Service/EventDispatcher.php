@@ -22,7 +22,13 @@ class EventDispatcher
         $this->exchange   = $exchange ?: '';
         $this->queue      = $queue;
 
-        $connection->connect();
+        try {
+            $connection->connect();
+        } catch (\Bunny\Exception\ClientException $e) {
+            if (strpos($e->getMessage(), "already connected") === false) {
+                throw $e;
+            }
+        }
 
         $this->channel = $connection->channel();
 
@@ -56,3 +62,4 @@ class EventDispatcher
         return $this;
     }
 }
+
