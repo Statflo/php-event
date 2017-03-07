@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="statflo.service.eventManager" class="Statflo\Service\EventManager" lazy="true">
+            <argument type="service" id="statflo.amqp.connection" />
+            <argument>%statflo.event_manager_exchange%</argument>
+            <argument>%statflo.event_manager_queue%</argument>
+        </service>
+    </services>
+</container>

@@ -1,0 +1,26 @@
+{
+    "name": "statflo/php-event",
+    "description": "EventManager package for statflo php projects",
+    "type": "library",
+    "require": {
+        "php-amqplib/php-amqplib": "2.5.*",
+        "statflo/php-di": "dev-master"
+    },
+    "license": "COPYRIGHT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "no-api": true,
+            "url":  "git@github.com:statflo/php-di.git"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Kinn Coelho Juliao",
+            "email": "kinn@statflo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Statflo\\": "src/Statflo"}
+    }
+}
