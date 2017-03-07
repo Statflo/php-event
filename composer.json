@@ -3,8 +3,9 @@
     "description": "EventManager package for statflo php projects",
     "type": "library",
     "require": {
-        "php-amqplib/php-amqplib": "2.5.*",
-        "statflo/php-di": "dev-master"
+        "statflo/php-di": "dev-master",
+        "bunny/bunny": "@dev",
+        "react/event-loop": "~0.4"
     },
     "license": "COPYRIGHT",
     "repositories": [
