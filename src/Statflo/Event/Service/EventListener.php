@@ -15,11 +15,11 @@ class EventListener
 
     public function  __construct(
         Client $connection,
-        $exchange,
+        $exchange = '',
         $queue
     ) {
         $this->connection = $connection;
-        $this->exchange   = $exchange;
+        $this->exchange   = $exchange ?: '';
         $this->queue      = $queue;
 
     }
@@ -69,7 +69,10 @@ class EventListener
                 return $client->channel();
             })
             ->then(function (Channel $channel) {
-                $channel->exchangeDeclare($this->exchange, 'topic', false, false, false);
+                if (!is_null($this->exchange) && strlen(trim($this->exchange)) > 0) {
+                    $channel->exchangeDeclare($this->exchange, 'topic', false, false, false);
+                }
+
                 $channel->queueDeclare($this->queue, false, false, false, false);
 
                 return $channel;

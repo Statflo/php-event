@@ -15,20 +15,22 @@ class EventDispatcher
 
     public function  __construct(
         Client $connection,
-        $exchange,
+        $exchange = '',
         $queue
     ) {
         $this->connection = $connection;
-        $this->exchange   = $exchange;
+        $this->exchange   = $exchange ?: '';
         $this->queue      = $queue;
 
         $connection->connect();
 
         $this->channel = $connection->channel();
 
-        $this
-            ->channel
-            ->exchangeDeclare($this->exchange, 'topic', false, false, false);
+        if (!is_null($exchange) && strlen(trim($exchange)) > 0) {
+            $this
+                ->channel
+                ->exchangeDeclare($this->exchange, 'topic', false, false, false);
+        }
 
         $this
             ->channel
