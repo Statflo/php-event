@@ -19,13 +19,11 @@ $bootstrap = Bootstrap::run([
     ]
 ]);
 
-$bootstrap
-    ->get('statflo.service.eventListener')
-    ->on('account.merge', function($message, $channel){
-        var_dump($message->content, $channel->ack($message));
-    })
-    ->listen()
-;
+$dispatcher = $bootstrap->get('statflo.service.eventDispatcher');
+
+for ($i=0; $i < 10000; $i++) {
+    $dispatcher->dispatch('account.merge',["foo" => "bar"]);
+}
 /**
 function (Message $message, Channel $channel, Client $client) {
     echo " [x] Received ", $message->content, "\n";
