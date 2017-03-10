@@ -12,7 +12,6 @@
         </service>
         <service id="statflo.service.eventDispatcher" class="Statflo\Event\Service\EventDispatcher" lazy="true">
             <argument type="service" id="statflo.amqp.connection" />
-            <argument>%statflo.event_manager_exchange%</argument>
             <argument>%statflo.event_manager_queue%</argument>
         </service>
     </services>

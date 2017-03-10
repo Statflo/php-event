@@ -10,17 +10,14 @@ class EventDispatcher
 {
     private $connection;
     private $exchange;
-    private $queue;
     private $channel;
 
     public function  __construct(
         Client $connection,
-        $exchange = '',
-        $queue
+        $exchange = ''
     ) {
         $this->connection = $connection;
         $this->exchange   = $exchange ?: '';
-        $this->queue      = $queue;
 
         try {
             $connection->connect();
@@ -37,10 +34,6 @@ class EventDispatcher
                 ->channel
                 ->exchangeDeclare($this->exchange, 'topic', false, false, false);
         }
-
-        $this
-            ->channel
-            ->queueDeclare($this->queue, false, false, false, false);
     }
 
     /**
