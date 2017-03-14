@@ -15,5 +15,5 @@
 
 ## Usage
 
-[Please, check the sample app](bin/consumer_sample.php)
-[and sample config](bin/config/config.xml)
+[Please, check the sample app](https://github.com/Statflo/php-event/blob/master/src/bin/consumer_sample.php)
+[and sample config](https://github.com/Statflo/php-event/blob/master/src/bin/config/config.xml)
