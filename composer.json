@@ -3,7 +3,7 @@
     "description": "EventManager package for statflo php projects",
     "type": "library",
     "require": {
-        "statflo/php-di": "dev-master",
+        "statflo/php-di": "1.0.0",
         "bunny/bunny": "@dev",
         "react/event-loop": "~0.4"
     },
