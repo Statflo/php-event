@@ -2,9 +2,11 @@
 
 namespace Statflo\Event\Service;
 
-use Statflo\Event\AsyncClient as Client;
-use Bunny\Channel;
-use Bunny\Message;
+use Statflo\Event\ClientInterface;
+use PhpAmqpLib\Channel\AbstractChannel;
+use PhpAmqpLib\Message\AMQPMessage as Message;
+use Statflo\Event\DTO\Message as MessageDTO;
+use Statflo\Event\DTO\Channel as ChannelDTO;
 
 class EventListener
 {
@@ -14,14 +16,26 @@ class EventListener
     private $handlers = [];
 
     public function  __construct(
-        Client $connection,
+        ClientInterface $connection,
         $exchange = '',
         $queue
     ) {
         $this->connection = $connection;
         $this->exchange   = $exchange ?: '';
         $this->queue      = $queue;
+        $this->channel    = $connection->channel();
 
+        if (!is_null($exchange) && strlen(trim($exchange)) > 0) {
+            $this
+                ->channel
+                ->exchange_declare($this->exchange, 'topic', false, false, false);
+        }
+
+        if (!is_null($queue) && strlen(trim($queue)) > 0) {
+            $this
+                ->channel
+                ->queue_declare($this->queue, false, true, false, false);
+        }
     }
 
     /**
@@ -41,7 +55,7 @@ class EventListener
         return $this;
     }
 
-    public function consume(Message $message, Channel $channel, Client $client)
+    public function consume(Message $message, AbstractChannel $channel, ClientInterface $client)
     {
         $eventName = $message->routingKey;
 
@@ -62,35 +76,32 @@ class EventListener
      */
     public function listen()
     {
-        $this
-            ->connection
-            ->connect()
-            ->then(function (Client $client) {
-                return $client->channel();
-            })
-            ->then(function (Channel $channel) {
-                if (!is_null($this->exchange) && strlen(trim($this->exchange)) > 0) {
-                    $channel->exchangeDeclare($this->exchange, 'topic', false, false, false);
-                }
+        $channel = $this->channel;
+        foreach ($this->handlers as $eventName => $none) {
+            $channel
+                ->queue_bind($this->queue, $this->exchange, $eventName)
+            ;
+        }
 
-                $channel->queueDeclare($this->queue, false, false, false, false);
+        $channel->basic_consume($this->queue, '', false, false, false, false, [$this, 'processMessage']);
+        while(count($channel->callbacks)) {
+            $channel->wait();
+        }
 
-                return $channel;
-            })
-            ->then(function (Channel $channel) {
-                foreach ($this->handlers as $eventName => $none) {
-                    $channel
-                        ->queueBind($this->queue, $this->exchange, $eventName)
-                    ;
-                }
+        $channel->close();
+        $this->connection->close();
+    }
 
-                return $channel;
-            })
-            ->then(function (Channel $channel) {
-                echo ' [*] Waiting for messages. To exit press CTRL+C', "\n";
-                $channel->consume([$this, 'consume'],$this->queue);
-            })
-        ;
-        $this->connection->getEventLoop()->run();
+    /**
+     * @param \PhpAmqpLib\Message\AMQPMessage $message
+     */
+    public function processMessage($message)
+    {
+        $routingKey = $message->delivery_info['routing_key'];
+        $handlers   = $this->handlers[$routingKey] ?? [];
+
+        foreach ($handlers as $handler) {
+            $handler(new MessageDTO($message), new ChannelDTO($message->delivery_info['channel']));
+        }
     }
 }

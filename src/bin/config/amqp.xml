@@ -5,25 +5,11 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="statflo.amqp.eventLoop" class="React\EventLoop\LoopInterface" lazy="true">
-            <factory class="React\EventLoop\Factory" method="create" />
-        </service>
-        <service id="statflo.amqp.asyncConnection" class="Statflo\Event\AsyncClient" lazy="true">
-            <argument type="service" id="statflo.amqp.eventLoop" />
-            <argument type="collection">
-                <argument key="host">%statflo.amqp_host%</argument>
-                <argument key="port">%statflo.amqp_port%</argument>
-                <argument key="user">%statflo.amqp_user%</argument>
-                <argument key="password">%statflo.amqp_password%</argument>
-            </argument>
-        </service>
         <service id="statflo.amqp.connection" class="Statflo\Event\Client" lazy="true">
-            <argument type="collection">
-                <argument key="host">%statflo.amqp_host%</argument>
-                <argument key="port">%statflo.amqp_port%</argument>
-                <argument key="user">%statflo.amqp_user%</argument>
-                <argument key="password">%statflo.amqp_password%</argument>
-            </argument>
+            <argument key="host">%statflo.amqp_host%</argument>
+            <argument key="port">%statflo.amqp_port%</argument>
+            <argument key="user">%statflo.amqp_user%</argument>
+            <argument key="password">%statflo.amqp_password%</argument>
         </service>
     </services>
 </container>

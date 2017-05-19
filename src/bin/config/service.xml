@@ -6,13 +6,13 @@
 
     <services>
         <service id="statflo.service.eventListener" class="Statflo\Event\Service\EventListener" lazy="true">
-            <argument type="service" id="statflo.amqp.asyncConnection" />
+            <argument type="service" id="statflo.amqp.connection" />
             <argument>%statflo.event_manager_exchange%</argument>
             <argument>%statflo.event_manager_queue%</argument>
         </service>
         <service id="statflo.service.eventDispatcher" class="Statflo\Event\Service\EventDispatcher" lazy="true">
             <argument type="service" id="statflo.amqp.connection" />
-            <argument>%statflo.event_manager_queue%</argument>
+            <argument>%statflo.event_manager_exchange%</argument>
         </service>
     </services>
 </container>

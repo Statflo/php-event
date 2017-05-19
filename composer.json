@@ -4,8 +4,7 @@
     "type": "library",
     "require": {
         "statflo/php-di": ">=1.0 <2.0",
-        "bunny/bunny": "@dev",
-        "react/event-loop": "~0.4"
+        "php-amqplib/php-amqplib": "2.6.*"
     },
     "license": "COPYRIGHT",
     "authors": [

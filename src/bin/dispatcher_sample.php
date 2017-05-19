@@ -21,8 +21,8 @@ $bootstrap = Bootstrap::run([
 
 $dispatcher = $bootstrap->get('statflo.service.eventDispatcher');
 
-for ($i=0; $i < 10000; $i++) {
-    $dispatcher->dispatch('account.merge',["foo" => "bar"]);
+for ($i=0; $i < 100000; $i++) {
+    $dispatcher->dispatch('foo.bar',["foo" => "bar" . $i]);
 }
 /**
 function (Message $message, Channel $channel, Client $client) {

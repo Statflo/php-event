@@ -2,9 +2,8 @@
 
 namespace Statflo\Event\Service;
 
-use Statflo\Event\Client;
-use Bunny\Channel;
-use Bunny\Message;
+use Statflo\Event\ClientInterface;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class EventDispatcher
 {
@@ -13,26 +12,17 @@ class EventDispatcher
     private $channel;
 
     public function  __construct(
-        Client $connection,
+        ClientInterface $connection,
         $exchange = ''
     ) {
         $this->connection = $connection;
         $this->exchange   = $exchange ?: '';
-
-        try {
-            $connection->connect();
-        } catch (\Bunny\Exception\ClientException $e) {
-            if (strpos($e->getMessage(), "already connected") === false) {
-                throw $e;
-            }
-        }
-
-        $this->channel = $connection->channel();
+        $this->channel    = $connection->channel();
 
         if (!is_null($exchange) && strlen(trim($exchange)) > 0) {
             $this
                 ->channel
-                ->exchangeDeclare($this->exchange, 'topic', false, false, false);
+                ->exchange_declare($this->exchange, 'topic', false, false, false);
         }
     }
 
@@ -43,16 +33,20 @@ class EventDispatcher
      */
     public function dispatch($eventName, $data, $headers = [])
     {
+        $contentType = 'shortstr';
+
         if (!is_string($data)) {
-            $data = json_encode($data);
+            $data        = json_encode($data);
+            $contentType = 'application/json';
         }
+
+        $msg = new AMQPMessage($data);
 
         $this
             ->channel
-            ->publish($data, $headers, $this->exchange, $eventName)
+            ->basic_publish($msg, $this->exchange, $eventName)
         ;
 
         return $this;
     }
 }
-

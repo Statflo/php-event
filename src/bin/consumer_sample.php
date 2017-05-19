@@ -21,8 +21,10 @@ $bootstrap = Bootstrap::run([
 
 $bootstrap
     ->get('statflo.service.eventListener')
-    ->on('account.merge', function($message, $channel){
+    ->on('foo.bar', function($message, $channel){
+        echo "\n--------\n";
         var_dump($message->content, $channel->ack($message));
+        echo "\n--------\n";
     })
     ->listen()
 ;

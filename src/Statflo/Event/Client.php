@@ -2,8 +2,12 @@
 
 namespace Statflo\Event;
 
-use Bunny\Client as BaseClient;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-class Client extends BaseClient
+class Client extends AMQPStreamConnection implements ClientInterface
 {
+    public function isTLS()
+    {
+        return false;
+    }
 }
